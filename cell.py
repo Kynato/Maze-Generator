@@ -6,6 +6,16 @@ class MazeCell():
         self.toCheck = True
         self.wasVisited = False
 
+    def __str__(self):
+        return str(self.directions.count(True))
+        #if self.wasVisited: return '⊡'
+        #return '∎'
+
+    def __repr__(self):
+        return str(self.directions.count(True))
+        #if self.wasVisited: return '⊡'
+        #return '∎'
+
     def setAllDir(self, up:bool, down:bool, left:bool, right: bool):
         self.directions = [up, down, left, right]
         self.checkAvailability()
