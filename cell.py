@@ -16,6 +16,11 @@ class MazeCell():
         #if self.wasVisited: return '⊡'
         #return '∎'
 
+    def isDirGood(self, dir:int):
+        if self.directions[dir]:
+            return True
+        return False
+
     def setAllDir(self, up:bool, down:bool, left:bool, right: bool):
         self.directions = [up, down, left, right]
         self.checkAvailability()

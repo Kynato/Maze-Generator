@@ -41,6 +41,7 @@ class Maze:
         self.width = width
         self.height = height
         self.table = createTable(width, height)
+        self.coordHistory = []
         self.limitByWalls()
         self.labirynth = []
         self.generateLabirynth()
@@ -73,27 +74,58 @@ class Maze:
             output.append(newRow)
         
         self.labirynth = output
-        coords = [0,0]
-        chosenDir = self.table[coords[1]][coords[0]].pickDirection()
+        self.coordHistory.append([0,0])
+        
+        prevDir = chosenDir = self.table[self.coordHistory[-1][1]][self.coordHistory[-1][0]].pickDirection()
                 #[col, row]
         # 0-up 1-down 2-left 3-right
         while True:
             if chosenDir < 0:
                 print('Something went wrong')
                 
-            self.table[coords[1]][coords[0]].setOneDir(chosenDir, False)
-            self.table[coords[1]][coords[0]].wasVisited = True
-            self.labirynth[coords[1]][coords[0]] = chosenDir
-            self.table[coords[1]][coords[0]].setOneDir(opositeDir(chosenDir), False)
-            coords = coordsPlusDir(coords, chosenDir)
+            # mark direction as used
+            self.table[self.coordHistory[-1][1]][self.coordHistory[-1][0]].setOneDir(chosenDir, False)
+            # mark cell as visited
+            self.table[self.coordHistory[-1][1]][self.coordHistory[-1][0]].wasVisited = True
+            # mark chosen direction in labirynth matrix
+            self.labirynth[self.coordHistory[-1][1]][self.coordHistory[-1][0]] = chosenDir
+            # mark direction we came from as used
+            self.table[self.coordHistory[-1][1]][self.coordHistory[-1][0]].setOneDir(prevDir, False)
+            # set coords to new position
+            self.coordHistory.append(coordsPlusDir(self.coordHistory[-1], chosenDir))
 
-            while True:
-                chosenDir = self.table[coords[1]][coords[0]].pickDirection()
+            # remember old direction
+            prevDir = chosenDir
+
+            # pick new direction
+            indices = list(range(4))
+            while len(indices) > 0:
+                chosenDir = rd.choice(indices)
                 print('dir: ' + str(chosenDir))
-                tmp = coordsPlusDir(coords, chosenDir)
-                if self.labirynth[tmp[1]][tmp[0]] == -1:
-                    break
-
+                if self.table[self.coordHistory[-1][1]][self.coordHistory[-1][0]].isDirGood(chosenDir):
+                    tmp = coordsPlusDir(self.coordHistory[-1], chosenDir)
+                    if self.labirynth[tmp[1]][tmp[0]] == -1:
+                        #self.table[self.coordHistory[-1][1]][self.coordHistory[-1][0]].setOneDir(chosenDir, False)
+                        break
+                indices.remove(chosenDir)
+            if len(indices) == 0:
+                print('No available cells. Need to backtrack.')
+                self.labirynth[self.coordHistory[-1][1]][self.coordHistory[-1][0]] = 4
+                self.table[self.coordHistory[-1][1]][self.coordHistory[-1][0]].wasVisited = True
+                while not self.isNewBreakpoint(self.coordHistory[-1][1], self.coordHistory[-1][0]):
+                    print('Popped once')
+                    self.coordHistory.pop()
+                indices = list(range(4))
+                while len(indices) > 0:
+                    chosenDir = rd.choice(indices)
+                    #chosenDir = self.table[coords[1]][coords[0]].pickDirection()
+                    print('dir: ' + str(chosenDir))
+                    if self.table[self.coordHistory[-1][1]][self.coordHistory[-1][0]].isDirGood(chosenDir):
+                        tmp = coordsPlusDir(self.coordHistory[-1], chosenDir)
+                        if self.labirynth[tmp[1]][tmp[0]] == -1:
+                            self.table[self.coordHistory[-1][1]][self.coordHistory[-1][0]].setOneDir(chosenDir, False)
+                            break
+                    indices.remove(chosenDir)
             
             self.printLabirynth()
             input()
@@ -115,11 +147,23 @@ class Maze:
                     newRow += '← '
                 if dir == 3: 
                     newRow += '→ '
+                if dir == 4: 
+                    newRow += '# '
             output += newRow + '\n'
         
         print(output + '-------------------\n')
 
-    
+    def isNewBreakpoint(self, row:int, col:int):
+        if not self.table[row+1][col].wasVisited:
+            return True
+        if not self.table[row-1][col].wasVisited:
+            return True
+        if not self.table[row][col+1].wasVisited:
+            return True
+        if not self.table[row][col-1].wasVisited:
+            return True
+        return False
+
 
 
 
