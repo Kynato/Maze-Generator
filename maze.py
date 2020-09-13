@@ -22,6 +22,18 @@ def coordsPlusDir(oldCoords, dir:int):
         return [oldCoords[0] - 1, oldCoords[1]]
     if dir == 3: 
         return [oldCoords[0] + 1, oldCoords[1]]
+
+def opositeDir(dir:int):
+    if dir == 0:
+        return 1
+    if dir == 1:
+        return 0
+    if dir == 2:
+        return 3
+    if dir == 3:
+        return 2
+
+    return -1
         
 
 class Maze:
@@ -62,12 +74,15 @@ class Maze:
         
         self.labirynth = output
         coords = [0,0]
+                #[col, row]
         # 0-up 1-down 2-left 3-right
         while True:
-            chosenDir = self.table[coords[0]][coords[1]].pickDirection()
-            self.table[coords[0]][coords[1]].setOneDir(chosenDir, False)
-            self.labirynth[coords[0]][coords[1]] = chosenDir
+            
+            chosenDir = self.table[coords[1]][coords[0]].pickDirection()
+            self.table[coords[1]][coords[0]].setOneDir(chosenDir, False)
+            self.labirynth[coords[1]][coords[0]] = chosenDir
             coords = coordsPlusDir(coords, chosenDir)
+            self.table[coords[1]][coords[0]].setOneDir(opositeDir(chosenDir), False)
             self.printLabirynth()
             input()
 
@@ -78,6 +93,8 @@ class Maze:
             newRow = ''
             for col in range(self.width):
                 dir = self.labirynth[row][col]
+                if dir == -1:
+                    newRow += '  '
                 if dir == 0:
                     newRow += '↑ '
                 if dir == 1:
