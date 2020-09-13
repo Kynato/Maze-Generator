@@ -74,15 +74,22 @@ class Maze:
         
         self.labirynth = output
         coords = [0,0]
+        chosenDir = self.table[coords[1]][coords[0]].pickDirection()
                 #[col, row]
         # 0-up 1-down 2-left 3-right
         while True:
-            
-            chosenDir = self.table[coords[1]][coords[0]].pickDirection()
+            if chosenDir < 0:
+                print('Something went wrong')
             self.table[coords[1]][coords[0]].setOneDir(chosenDir, False)
+            self.table[coords[1]][coords[0]].wasVisited = True
             self.labirynth[coords[1]][coords[0]] = chosenDir
             coords = coordsPlusDir(coords, chosenDir)
             self.table[coords[1]][coords[0]].setOneDir(opositeDir(chosenDir), False)
+            while True:
+                chosenDir = self.table[coords[1]][coords[0]].pickDirection()
+                tmp = coordsPlusDir(coords, chosenDir)
+                if self.labirynth[tmp[1]][tmp[0]] < 0:
+                    break
             self.printLabirynth()
             input()
 
@@ -106,6 +113,8 @@ class Maze:
             output += newRow + '\n'
         
         print(output + '-------------------\n')
+
+    
 
 
 
