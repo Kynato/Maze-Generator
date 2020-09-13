@@ -43,7 +43,7 @@ class MazeCell():
 
     def checkAvailability(self):
         for dir in self.directions:
-            if self.directions[dir]:
+            if dir == True:
                 self.toCheck = True
                 return True
         # If gets here then no direction was available

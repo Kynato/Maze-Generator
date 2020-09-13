@@ -87,8 +87,9 @@ class Maze:
             self.table[coords[1]][coords[0]].setOneDir(opositeDir(chosenDir), False)
             while True:
                 chosenDir = self.table[coords[1]][coords[0]].pickDirection()
+                print('dir: ' + str(chosenDir))
                 tmp = coordsPlusDir(coords, chosenDir)
-                if self.labirynth[tmp[1]][tmp[0]] < 0:
+                if self.labirynth[tmp[1]][tmp[0]] == -1:
                     break
             self.printLabirynth()
             input()
