@@ -80,17 +80,21 @@ class Maze:
         while True:
             if chosenDir < 0:
                 print('Something went wrong')
+                
             self.table[coords[1]][coords[0]].setOneDir(chosenDir, False)
             self.table[coords[1]][coords[0]].wasVisited = True
             self.labirynth[coords[1]][coords[0]] = chosenDir
-            coords = coordsPlusDir(coords, chosenDir)
             self.table[coords[1]][coords[0]].setOneDir(opositeDir(chosenDir), False)
+            coords = coordsPlusDir(coords, chosenDir)
+
             while True:
                 chosenDir = self.table[coords[1]][coords[0]].pickDirection()
                 print('dir: ' + str(chosenDir))
                 tmp = coordsPlusDir(coords, chosenDir)
                 if self.labirynth[tmp[1]][tmp[0]] == -1:
                     break
+
+            
             self.printLabirynth()
             input()
 
