@@ -154,13 +154,13 @@ class Maze:
         print(output + '-------------------\n')
 
     def isNewBreakpoint(self, row:int, col:int):
-        if not self.table[row+1][col].wasVisited:
+        if not self.table[row+1][col].wasVisited and row+1 < self.height:
             return True
-        if not self.table[row-1][col].wasVisited:
+        if not self.table[row-1][col].wasVisited and row > 0:
             return True
-        if not self.table[row][col+1].wasVisited:
+        if not self.table[row][col+1].wasVisited and col+1 < self.width:
             return True
-        if not self.table[row][col-1].wasVisited:
+        if not self.table[row][col-1].wasVisited and col > 0:
             return True
         return False
 
