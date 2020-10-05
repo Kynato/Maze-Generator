@@ -1,16 +1,18 @@
 import pygame
 from pygame.locals import *
+import math
 
 
 class GUI:
-    def __init__(self, w:int, h:int):
+    def __init__(self, w:int, h:int, dens:float):
         # Initiate the pygame engine
         pygame.init()
         pygame.font.init()
-        pygame.display.set_caption('SUDOKU - by Alan Hudela')
+        pygame.display.set_caption('MAZE_GENERATOR - Alan Hudela')
 
         self.width = w
         self.height = h
+        self.density = dens
         self.state = True
         self.backgroundColor = pygame.Color(25, 25, 25)
         self.font = pygame.font.SysFont("segoeui", 46)
@@ -21,28 +23,26 @@ class GUI:
         self.screen.fill(self.backgroundColor)
 
     def generateBackground(self):
-        boxSpacing = self.width/9
+        VertSpacing = self.width/self.density
+        HorSpacing = self.height/self.density
         lineThickness = self.width*0.005
         fatlineThickness = self.width*0.01
         offset = -(lineThickness/2)
-        fatOffset = -(fatlineThickness/2)
         slimColor = (100,100,100)
-        fatColor = (200,200,200)
         
         # Slim lines
-        for i in range(10):
+        for i in range(math.floor(HorSpacing)):
             # Horizontal lines
-            pygame.draw.rect(self.screen, slimColor, pygame.Rect(offset + i * boxSpacing, 0, lineThickness, self.width))
+            pygame.draw.rect(self.screen, slimColor, pygame.Rect(offset + i * HorSpacing, 0, lineThickness, self.width))
+        
+        for i in range(math.floor(VertSpacing)):
             # Vertical lines
-            pygame.draw.rect(self.screen, slimColor, pygame.Rect(0, offset+ i * boxSpacing, self.width, lineThickness))
+            pygame.draw.rect(self.screen, slimColor, pygame.Rect(0, offset+ i * VertSpacing, self.width, lineThickness))
+        
+        fatOffset = -(fatlineThickness/2)
+        fatColor = (200,200,200)
 
-        # Thicc lines
-        for i in range(4):
-            # Horizontal lines
-            pygame.draw.rect(self.screen, fatColor, pygame.Rect(fatOffset + i * (boxSpacing*3), 0, fatlineThickness, self.width))
-            # Vertical lines
-            pygame.draw.rect(self.screen, fatColor, pygame.Rect(0, fatOffset+ i * (boxSpacing*3), self.width, fatlineThickness))
-
+        
     def drawDigit(self, row:int, col:int, value:int):
         spacing = self.width/9
         horizontalOffset = spacing/2
